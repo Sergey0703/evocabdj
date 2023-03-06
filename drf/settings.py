@@ -43,8 +43,8 @@ INSTALLED_APPS = [
     'evocabapi.apps.EvocabapiConfig',
     'rest_framework',
     'rest_framework.authtoken',
-    'django_extensions',
 ]
+#    'django_extensions',
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES' : [

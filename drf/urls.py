@@ -16,9 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from evocabapi.views import ListUsers, CustomAuthToken
+from evocabapi.views import ViewWords
 
 urlpatterns = [
     path('api/', ListUsers.as_view()),
     path('api/token/auth/', CustomAuthToken.as_view()),
+    path('api/words/', ViewWords.as_view()),
     path('admin/', admin.site.urls),
 ]

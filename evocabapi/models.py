@@ -10,3 +10,16 @@ from rest_framework.authtoken.models import Token
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
+
+
+class WordsModel(models.Model):
+    word = models.CharField(max_length=200)
+    translate = models.CharField(max_length=200)
+    train1=models.BooleanField(False)
+    trainDate=models.DateTimeField(auto_now=True)
+    transcript=models.CharField(max_length=200)
+    sound=models.CharField(max_length=200)
+    updateDate=models.DateTimeField(auto_created=True)
+    owner=models.CharField(auto_created=True)
+
+
