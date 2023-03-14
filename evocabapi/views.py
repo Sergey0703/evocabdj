@@ -1,6 +1,6 @@
 from bson import json_util
 from django.http import JsonResponse, Http404
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django_rest.http import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -67,14 +67,16 @@ class ViewWords(APIView):
 
     def get(self, request, *args, **kwargs):
         #queryset = WordsModel.objects.all().values()
-        queryset = WordsModel.objects.order_by('updateDate').values()[:1] #filter(train1=True).values()
+        queryset = WordsModel.objects.order_by('trainDate').values()[:1] #filter(train1=True).values()
+        queryset2 = WordsModel.objects.all().count()
+        #queryset = queryset | queryset2;
         print("GET")
         print(queryset)
         #df = df.iloc[:, 1:]
         queryset=json.loads(json_util.dumps(queryset))
         print("GET2")
-        print(queryset)
-        return JsonResponse({'title': queryset})
+        print(queryset2)
+        return Response({'title': queryset})
         #return Response({'title': queryset})
         #queryset = WordsModel.objects.all()
         #words_serializer = WordsSerializer
@@ -105,8 +107,8 @@ class ViewWords(APIView):
             serializer.update(obj, request.data)
             print("Save!!!!!!!!!!!"+request.data.get("code"))
             #serializer.update(obj, request.data)
-            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-
+            #return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+            return redirect('getword')
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         #train1=request.data.get("train1")

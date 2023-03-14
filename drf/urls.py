@@ -21,6 +21,6 @@ from evocabapi.views import ViewWords
 urlpatterns = [
     path('api/', ListUsers.as_view()),
     path('api/token/auth/', CustomAuthToken.as_view()),
-    path('api/words/', ViewWords.as_view()),
+    path('api/words/', ViewWords.as_view(), name = 'getword'),
     path('admin/', admin.site.urls),
 ]
