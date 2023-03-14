@@ -1,3 +1,4 @@
+from bson import json_util
 from django.http import JsonResponse, Http404
 from django.shortcuts import render, get_object_or_404
 from django_rest.http import status
@@ -11,6 +12,7 @@ from rest_framework.response import Response
 from .models import WordsModel
 from .serializers import WordsSerializer
 from bson.objectid import ObjectId
+import json
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.parsers import JSONParser
 
@@ -47,6 +49,11 @@ class CustomAuthToken(ObtainAuthToken):
             'email': user.email
         })
 
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, ObjectId):
+            return str(o)
+        return json.JSONEncoder.default(self, o)
 
 class ViewWords(APIView):
     model=WordsModel
@@ -62,8 +69,13 @@ class ViewWords(APIView):
         #queryset = WordsModel.objects.all().values()
         queryset = WordsModel.objects.order_by('updateDate').values()[:1] #filter(train1=True).values()
         print("GET")
-        #return JsonResponse({'title': list(queryset)})
-        return Response({'title': queryset})
+        print(queryset)
+        #df = df.iloc[:, 1:]
+        queryset=json.loads(json_util.dumps(queryset))
+        print("GET2")
+        print(queryset)
+        return JsonResponse({'title': queryset})
+        #return Response({'title': queryset})
         #queryset = WordsModel.objects.all()
         #words_serializer = WordsSerializer
 
