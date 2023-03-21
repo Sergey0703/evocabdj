@@ -67,7 +67,8 @@ class ViewWords(APIView):
 
     def get(self, request, *args, **kwargs):
         #queryset = WordsModel.objects.all().values()
-        queryset = WordsModel.objects.order_by('trainDate').values()[:1] #filter(train1=True).values()
+        #queryset = WordsModel.objects.order_by('trainDate').values()[:1] #filter(train1=True).values()
+        queryset = WordsModel.objects.order_by('trainDate').values("word", "translate","_id")[:1] #filter(train1=True).values()
         queryset2 = WordsModel.objects.all().count()
         #queryset = queryset | queryset2;
         print("GET")
@@ -75,8 +76,12 @@ class ViewWords(APIView):
         #df = df.iloc[:, 1:]
         queryset=json.loads(json_util.dumps(queryset))
         print("GET2")
-        print(queryset2)
-        return Response({'title': queryset})
+        print(queryset)
+        id=queryset[0]['translate'].get('$oid');
+        #return Response({'word': queryset,'add':queryset2})
+        #word=queryset[0];
+        #print(word)
+        return Response({'word': queryset[0]['word'], 'translate':queryset[0]['translate'],'id':id})
         #return Response({'title': queryset})
         #queryset = WordsModel.objects.all()
         #words_serializer = WordsSerializer
