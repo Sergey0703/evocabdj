@@ -68,8 +68,8 @@ class ViewWords(APIView):
     def get(self, request, *args, **kwargs):
         #queryset = WordsModel.objects.all().values()
         #queryset = WordsModel.objects.order_by('trainDate').values()[:1] #filter(train1=True).values()
-        queryset = WordsModel.objects.order_by('trainDate').values("word", "translate","_id")[:1] #filter(train1=True).values()
-        queryset2 = WordsModel.objects.all().count()
+        queryset = WordsModel.objects.order_by('trainDate').values("word", "translate", "_id", "train1", "transcript", "sound", "trainDate")[:1] #filter(train1=True).values()
+        querysetCount = WordsModel.objects.all().count()
         #queryset = queryset | queryset2;
         print("GET")
         print(queryset)
@@ -77,11 +77,12 @@ class ViewWords(APIView):
         queryset=json.loads(json_util.dumps(queryset))
         print("GET2")
         print(queryset)
-        id=queryset[0]['translate'].get('$oid');
+        id=queryset[0]['_id']['$oid']
+        print(id)
         #return Response({'word': queryset,'add':queryset2})
         #word=queryset[0];
         #print(word)
-        return Response({'word': queryset[0]['word'], 'translate':queryset[0]['translate'],'id':id})
+        return Response({'word': queryset[0]['word'], 'translate':queryset[0]['translate'],'id':id,'train1':queryset[0]['train1'], 'transcript':queryset[0]['transcript'], 'sound':queryset[0]['sound'], 'count':querysetCount})
         #return Response({'title': queryset})
         #queryset = WordsModel.objects.all()
         #words_serializer = WordsSerializer
@@ -102,7 +103,9 @@ class ViewWords(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request, pk=None):
-        obj = self.get_object(request.data.get("_id"))
+        print("PATCH")
+        print(request.data)
+        obj = self.get_object(request.data.get("id"))
         print("obj=")
         print(obj.word)
 
@@ -110,7 +113,7 @@ class ViewWords(APIView):
         if serializer.is_valid():
             #serializer.save()
             serializer.update(obj, request.data)
-            print("Save!!!!!!!!!!!"+request.data.get("code"))
+            #print(request.data.get("code"))
             #serializer.update(obj, request.data)
             #return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
             return redirect('getword')
