@@ -1,6 +1,9 @@
+from datetime import datetime, date
+
 from bson import json_util
 from django.http import JsonResponse, Http404
 from django.shortcuts import render, get_object_or_404, redirect
+from django.utils import timezone
 from django_rest.http import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -69,7 +72,30 @@ class ViewWords(APIView):
         #queryset = WordsModel.objects.all().values()
         #queryset = WordsModel.objects.order_by('trainDate').values()[:1] #filter(train1=True).values()
         queryset = WordsModel.objects.order_by('trainDate').values("word", "translate", "_id", "train1", "transcript", "sound", "trainDate")[:1] #filter(train1=True).values()
-        querysetCount = WordsModel.objects.all().count()
+        # today_min = datetime.combine(datetime.date.today(), datetime.time.min)
+        # today_max = datetime.combine(datetime.date.today(), datetime.time.max)
+        today_min = datetime.combine(timezone.now().date(), datetime.today().time().min)
+        today_max = datetime.combine(timezone.now().date(), datetime.today().time().max)
+        #today = date.today()
+        #today = datetime.today()
+        #querysetCount = WordsModel.objects.filter(trainDate__range=(today_min, today_max))
+        querysetCount = WordsModel.objects.filter(trainDate__range=(today_min, today_max))
+        if not querysetCount:
+            count=0
+        else:
+            count = querysetCount.count()
+
+
+        #querysetCount=2;
+        querysetCountBad = WordsModel.objects.filter(trainDate__range=(today_min, today_max)).filter(train1__in=[False])
+        #querysetCountBad = querysetCount.filter(train1=True)
+        if not querysetCountBad:
+            countBad=0
+        else:
+            countBad=querysetCountBad.count()
+            #countBad=0
+
+        #querysetCountBad = WordsModel.objects.filter(train1=True).count()
         #queryset = queryset | queryset2;
         print("GET")
         print(queryset)
@@ -82,7 +108,7 @@ class ViewWords(APIView):
         #return Response({'word': queryset,'add':queryset2})
         #word=queryset[0];
         #print(word)
-        return Response({'word': queryset[0]['word'], 'translate':queryset[0]['translate'],'id':id,'train1':queryset[0]['train1'], 'transcript':queryset[0]['transcript'], 'sound':queryset[0]['sound'], 'count':querysetCount})
+        return Response({'word': queryset[0]['word'], 'translate':queryset[0]['translate'],'id':id,'train1':queryset[0]['train1'], 'transcript':queryset[0]['transcript'], 'sound':queryset[0]['sound'], 'countWord':count,'countWordBad':countBad})
         #return Response({'title': queryset})
         #queryset = WordsModel.objects.all()
         #words_serializer = WordsSerializer
