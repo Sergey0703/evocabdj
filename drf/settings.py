@@ -117,7 +117,7 @@ DATABASES = {
            'ENGINE': 'djongo',
            'CLIENT': {
                 "host": "mongodb+srv://sergey0703:s77778@cluster0.1lssu.mongodb.net/?retryWrites=true&w=majority",
-                "name": "evocab",
+                "name": "cluster0",
                 "authMechanism": "SCRAM-SHA-1"
            }
 

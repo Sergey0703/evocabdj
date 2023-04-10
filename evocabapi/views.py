@@ -69,26 +69,30 @@ class ViewWords(APIView):
 
 
     def get(self, request, *args, **kwargs):
-        #queryset = WordsModel.objects.all().values()
+        #queryset = WordsModel.objects.all()
+        #print('wm=',WordsModel._meta.db_table)
         #queryset = WordsModel.objects.order_by('trainDate').values()[:1] #filter(train1=True).values()
         queryset = WordsModel.objects.order_by('trainDate').values("word", "translate", "_id", "train1", "transcript", "sound", "trainDate")[:1] #filter(train1=True).values()
-        # today_min = datetime.combine(datetime.date.today(), datetime.time.min)
-        # today_max = datetime.combine(datetime.date.today(), datetime.time.max)
+        #!today_min = datetime.combine(datetime.date.today(), datetime.time.min)
+        #!today_max = datetime.combine(datetime.date.today(), datetime.time.max)
         today_min = datetime.combine(timezone.now().date(), datetime.today().time().min)
         today_max = datetime.combine(timezone.now().date(), datetime.today().time().max)
         #today = date.today()
         #today = datetime.today()
-        #querysetCount = WordsModel.objects.filter(trainDate__range=(today_min, today_max))
-        querysetCount = WordsModel.objects.filter(trainDate__range=(today_min, today_max))
+        #querysetCount = WordsModel.objects.filter(trainDate__date=today)
+        querysetCount = WordsModel.objects.filter(trainDate__range=(today_min, today_max), train1__in=[True])
+        #querysetCount = WordsModel.objects.filter(train1__in=[False])
         if not querysetCount:
             count=0
         else:
             count = querysetCount.count()
 
+        print("count=", count)
 
         #querysetCount=2;
-        querysetCountBad = WordsModel.objects.filter(trainDate__range=(today_min, today_max)).filter(train1__in=[False])
-        #querysetCountBad = querysetCount.filter(train1=True)
+        #querysetCountBad = WordsModel.objects.filter(trainDate__range=(today_min, today_max)).filter(train1__in=[False])
+        querysetCountBad = WordsModel.objects.filter(trainDate__range=(today_min, today_max), train1__in=[False])
+
         if not querysetCountBad:
             countBad=0
         else:

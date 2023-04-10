@@ -28,10 +28,14 @@ class WordsModel(models.Model):
     updateDate=models.DateTimeField(auto_created=True, null=True)
     owner=models.CharField(max_length=200, null=True)
 
+    class Meta:
+        db_table = 'words'
+        managed = False  # remove this line
+
     def __str__(self) -> str:
         return self.word
-    #class Meta:
-        #db_table = 'evocabapi_wordsmodel'
+
+
 '''
     def save(self, *args, **kwargs):
         # This means that the model isn't saved to the database yet
