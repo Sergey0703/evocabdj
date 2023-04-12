@@ -4,7 +4,7 @@ from bson import json_util
 from django.http import JsonResponse, Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-from django_rest.http import status
+#from django_rest.http import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import authentication, permissions
