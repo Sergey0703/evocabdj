@@ -69,6 +69,23 @@ class ViewWords(APIView):
 
 
     def get(self, request, *args, **kwargs):
+        print("request=",request)
+        print("nav=",request.GET.get("nav"))
+        #print("nav=",request.data.get("nav"))
+        print("id=",request.GET.get("_id"))
+
+        nav = request.GET.get("nav")
+        if nav is not None and nav != '':
+            navAction=nav
+
+        id=request.GET.get("_id")
+        if id is not None and id != '':
+            idAction=id
+
+        #if(nav)
+        #obj = self.get_object(request.data.get("_id"))
+        #print("obj=", obj.word)
+        #print(obj.word)
         #queryset = WordsModel.objects.all()
         #print('wm=',WordsModel._meta.db_table)
         #queryset = WordsModel.objects.order_by('trainDate').values()[:1] #filter(train1=True).values()
