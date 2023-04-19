@@ -73,7 +73,8 @@ class ViewWords(APIView):
         print("nav=",request.GET.get("nav"))
         #print("nav=",request.data.get("nav"))
         print("id=",request.GET.get("_id"))
-
+        navAction=""
+        idAction=""
         nav = request.GET.get("nav")
         if nav is not None and nav != '':
             navAction=nav
@@ -82,14 +83,21 @@ class ViewWords(APIView):
         if id is not None and id != '':
             idAction=id
 
-        #if(nav)
-        #obj = self.get_object(request.data.get("_id"))
-        #print("obj=", obj.word)
-        #print(obj.word)
-        #queryset = WordsModel.objects.all()
-        #print('wm=',WordsModel._meta.db_table)
+
         #queryset = WordsModel.objects.order_by('trainDate').values()[:1] #filter(train1=True).values()
-        queryset = WordsModel.objects.order_by('trainDate').values("word", "translate", "_id", "train1", "transcript", "sound", "trainDate")[:1] #filter(train1=True).values()
+        if(navAction=="")or(idAction==""):
+            queryset = WordsModel.objects.order_by('trainDate').values("word", "translate", "_id", "train1", "transcript", "sound", "trainDate")[:1] #filter(train1=True).values()
+        else:
+            #to=  WordsModel.objects.get(_id=id)
+            obj = self.get_object(id)
+            #to=WordsModel.objects.get(_id=ObjectId(str(id))).values("trainDate")
+            print("quer=",obj)
+            print("trainDate=",obj.trainDate)
+            #queryset = WordsModel.objects.order_by('trainDate').values("word", "translate", "_id", "train1", "transcript", "sound", "trainDate").filter(trainDate__lt=obj.trainDate)[:1]  # filter(train1=True).values()
+            queryset = WordsModel.objects.order_by('-trainDate').values("word", "translate", "_id", "train1", "transcript", "sound", "trainDate").filter(trainDate__lt=obj.trainDate)[:1]  # filter(train1=True).values()
+            if not queryset:
+                queryset = WordsModel.objects.order_by('-trainDate').values("word", "translate", "_id", "train1","transcript", "sound", "trainDate")[:1]
+                print("queryset =",queryset)
         #!today_min = datetime.combine(datetime.date.today(), datetime.time.min)
         #!today_max = datetime.combine(datetime.date.today(), datetime.time.max)
         today_min = datetime.combine(timezone.now().date(), datetime.today().time().min)
@@ -120,16 +128,19 @@ class ViewWords(APIView):
         #queryset = queryset | queryset2;
         print("GET")
         print(queryset)
+        trainDate = queryset[0]['trainDate']
         #df = df.iloc[:, 1:]
         queryset=json.loads(json_util.dumps(queryset))
         print("GET2")
         print(queryset)
         id=queryset[0]['_id']['$oid']
+
+        #trainDate = list(WordsModel.objects.extra(select={'date': "to_char(<DATABASENAME>_<TableName>.created_at, 'YYYY-MM-DD hh:mi AM')"}).values_list('date', flat='true')
         print(id)
         #return Response({'word': queryset,'add':queryset2})
         #word=queryset[0];
         #print(word)
-        return Response({'word': queryset[0]['word'], 'translate':queryset[0]['translate'],'id':id,'train1':queryset[0]['train1'], 'transcript':queryset[0]['transcript'], 'sound':queryset[0]['sound'], 'countWord':count,'countWordBad':countBad})
+        return Response({'word': queryset[0]['word'], 'translate':queryset[0]['translate'],'id':id,'train1':queryset[0]['train1'], 'trainDate':trainDate,'transcript':queryset[0]['transcript'], 'sound':queryset[0]['sound'], 'countWord':count,'countWordBad':countBad})
         #return Response({'title': queryset})
         #queryset = WordsModel.objects.all()
         #words_serializer = WordsSerializer
