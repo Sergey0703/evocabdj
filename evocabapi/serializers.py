@@ -1,3 +1,5 @@
+import datetime
+
 from bson.errors import InvalidId
 from django.contrib.auth.models import User
 from .models import WordsModel
@@ -41,6 +43,7 @@ class WordsSerializer(serializers.ModelSerializer):
         #instance.train1 = validated_data.get('train1', instance.train1)
         #instance.train1 = validated_data.get('train1')
         instance.train1 = validated_data.get('train1')
+        instance.trainDate = datetime.datetime.now()
         #instance.code = validated_data.get('code')
 
         print("Update!!!")

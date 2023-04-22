@@ -87,7 +87,7 @@ class ViewWords(APIView):
         #queryset = WordsModel.objects.order_by('trainDate').values()[:1] #filter(train1=True).values()
         if(navAction=="")or(idAction==""):
             queryset = WordsModel.objects.order_by('trainDate').values("word", "translate", "_id", "train1", "transcript", "sound", "trainDate")[:1] #filter(train1=True).values()
-        else:
+        elif (navAction=="prev"):
             #to=  WordsModel.objects.get(_id=id)
             obj = self.get_object(id)
             #to=WordsModel.objects.get(_id=ObjectId(str(id))).values("trainDate")
@@ -98,6 +98,19 @@ class ViewWords(APIView):
             if not queryset:
                 queryset = WordsModel.objects.order_by('-trainDate').values("word", "translate", "_id", "train1","transcript", "sound", "trainDate")[:1]
                 print("queryset =",queryset)
+        elif(navAction=="next"):
+            obj = self.get_object(id)
+            print("quer=", obj)
+            print("trainDate=", obj.trainDate)
+            # queryset = WordsModel.objects.order_by('trainDate').values("word", "translate", "_id", "train1", "transcript", "sound", "trainDate").filter(trainDate__lt=obj.trainDate)[:1]  # filter(train1=True).values()
+            queryset = WordsModel.objects.order_by('trainDate').values("word", "translate", "_id", "train1",
+                                                                        "transcript", "sound", "trainDate").filter(
+                trainDate__gt=obj.trainDate)[:1]
+            if not queryset:
+                queryset = WordsModel.objects.order_by('trainDate').values("word", "translate", "_id", "train1",
+                                                                            "transcript", "sound", "trainDate")[:1]
+                print("queryset =", queryset)
+
         #!today_min = datetime.combine(datetime.date.today(), datetime.time.min)
         #!today_max = datetime.combine(datetime.date.today(), datetime.time.max)
         today_min = datetime.combine(timezone.now().date(), datetime.today().time().min)
