@@ -43,7 +43,7 @@ class WordsSerializer(serializers.ModelSerializer):
         #instance.train1 = validated_data.get('train1', instance.train1)
         #instance.train1 = validated_data.get('train1')
         instance.train1 = validated_data.get('train1')
-        instance.trainDate = datetime.datetime.now()
+        #instance.trainDate = datetime.datetime.now()
         #instance.code = validated_data.get('code')
 
         print("Update!!!")
