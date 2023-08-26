@@ -16,6 +16,7 @@ from .models import WordsModel
 from .serializers import WordsSerializer
 from bson.objectid import ObjectId
 import json
+import openpyxl
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.parsers import JSONParser
 
@@ -52,11 +53,79 @@ class CustomAuthToken(ObtainAuthToken):
             'email': user.email
         })
 
+def importxls(request):
+    if "GET" == request.method:
+        return render(request, 'importxls.html', {})
+    else:
+        excel_file = request.FILES["excel_file"]
+
+        # you may put validations here to check extension or file size
+
+        wb = openpyxl.load_workbook(excel_file)
+
+        # getting all sheets
+        sheets = wb.sheetnames
+        print(sheets)
+
+        # getting a particular sheet
+        worksheet = wb["Sheet1"]
+        print(worksheet)
+
+        # getting active sheet
+        active_sheet = wb.active
+        print(active_sheet)
+
+        # reading a cell
+        print(worksheet["A1"].value)
+
+        excel_data = list()
+        # iterating over the rows and
+        # getting value from each cell in row
+        for row in worksheet.iter_rows():
+            row_data = list()
+            for cell in row:
+                row_data.append(str(cell.value))
+                print(cell.value)
+            print("row-------------------")
+            excel_data.append(row_data)
+
+        return render(request, 'importxls.html', {"excel_data":excel_data})
+
+
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, ObjectId):
             return str(o)
         return json.JSONEncoder.default(self, o)
+
+
+class ViewWordsDel(APIView):
+    model=WordsModel
+
+    def get_object(self, pk):
+        try:
+            return WordsModel.objects.get(_id=ObjectId(str(pk)))
+        except WordsModel.DoesNotExist:
+            return Http404
+
+
+    def get(self, request, *args, **kwargs):
+        print("request=",request)
+        print("nav=",request.GET.get("nav"))
+        print("id=", request.GET.get("_id"))
+        id = request.GET.get("_id")
+        obj = self.get_object(id)
+        querysetCount = WordsModel.objects.filter(trainDate='1970-01-01T00:00:00.000+00:00')
+        #querysetCount = WordsModel.objects.filter(trainDate='1970-01-01T00:00:00.000+00:00').delete()
+        #_id=64e4922ab48ef72e00eccac8
+        if not querysetCount:
+            count = 0
+        else:
+            count = querysetCount.count()
+
+        for w in querysetCount:
+            print(w.word)
+        return Response({'word': count})
 
 class ViewWords(APIView):
     model=WordsModel
