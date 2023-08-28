@@ -22,10 +22,12 @@ class WordsModel(models.Model):
     word = models.CharField(max_length=200)
     translate = models.CharField(max_length=200)
     train1=models.BooleanField(False, null=True)
-    trainDate=models.DateTimeField(auto_now=True)
+    #trainDate=models.DateTimeField(auto_now=True)
+    trainDate=models.DateTimeField(null=True)
     transcript=models.CharField(max_length=200, null=True)
     sound=models.CharField(max_length=200, null=True)
-    updateDate=models.DateTimeField(auto_created=True, null=True)
+    #updateDate=models.DateTimeField(auto_created=True, null=True)
+    updateDate=models.DateTimeField(auto_now=True)
     owner=models.CharField(max_length=200, null=True)
 
     class Meta:

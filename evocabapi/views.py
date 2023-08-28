@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime, date
 
 from bson import json_util
@@ -81,6 +82,7 @@ def importxls(request):
         excel_data = list()
         # iterating over the rows and
         # getting value from each cell in row
+        ii=0
         for row in worksheet.iter_rows():
             row_data = list()
             for cell in row:
@@ -88,6 +90,8 @@ def importxls(request):
                 print(cell.value)
             print("row-------------------")
             excel_data.append(row_data)
+            WordsModel.objects.create(word=row_data[0], translate=row_data[1],code=str(uuid.uuid4())[:16], trainDate='1970-01-01T00:00:00.000+00:00', train1=False,transcript=row_data[3],sound=row_data[5])
+            #break
 
         return render(request, 'importxls.html', {"excel_data":excel_data})
 
